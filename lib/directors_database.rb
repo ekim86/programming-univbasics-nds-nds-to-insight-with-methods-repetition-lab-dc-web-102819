@@ -5,13 +5,36 @@ def directors_database
   @_db ||= YAML.load(rot13.call(File.open("directors_db").read.to_s))
 end
 
-grand_total = 0
-row_index = 0
-while row_index < vm.length do
-  column_index = 0
-  while column_index < vm[row_index].length do
-    grand_total += total_value_of_spinner(vm, row_index, column_index)
-    column_index += 1
+end
+
+def list_of_directors(source)
+
+  source.map{ |d| d[:name] }
+  names = []
+  i = 0
+
+  while i < source.length do
+    names << source[i][:name]
+    i += 1
   end
-  row_index += 1
+
+  names
+end
+
+def total_gross(source)
+  
+  list_of_directors(source).reduce(0){|total, name| total +=  directors_totals(source)[name]}
+  dir_to_earnings_hash = directors_totals(source)
+  dir_names = list_of_directors(source)
+  i = 0
+
+  total = 0
+
+  while i < dir_names.length do
+    dir_name = dir_names[i]
+    total += dir_to_earnings_hash[dir_name]
+    i += 1
+  end
+
+  total
 end
